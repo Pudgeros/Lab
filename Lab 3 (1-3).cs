@@ -23,7 +23,7 @@ class Matrix
                 int value;
                 while (!int.TryParse(Console.ReadLine(), out value))
                 {
-                    Console.WriteLine("Некорректное значение. Пожалуйста, введите целое число.");
+                    Console.WriteLine("Некорректное значение. Введите целое число.");
                     Console.Write($"Введите элемент для позиции [{row}][{col}]: ");
                 }
                 matrix[row, col] = value;
@@ -270,7 +270,7 @@ class Program
             }
             else
             {
-                Console.WriteLine("Некорректное значение. Пожалуйста, введите положительное целое число.");
+                Console.WriteLine("Некорректное значение. Введите положительное целое число.");
             }
         }
     }
