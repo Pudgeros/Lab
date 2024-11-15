@@ -1,13 +1,43 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Serialization;
 
 public partial class TaskSolver
 {
+    // Класс для хранения данных о магазинах
+    public class Store
+    {
+        public string Firm { get; set; }
+        public string Street { get; set; }
+        public int Fatness { get; set; }
+        public int Price { get; set; }
+    }
+
+    // Метод для генерации данных и сериализации их в XML-файл
+    public static void GenerateAndSerializeData(string filePath)
+    {
+        List<Store> stores = new List<Store>
+        {
+            new Store { Firm = "Firm1", Street = "Street1", Fatness = 15, Price = 2500 },
+            new Store { Firm = "Firm2", Street = "Street2", Fatness = 20, Price = 3000 },
+            new Store { Firm = "Firm3", Street = "Street3", Fatness = 25, Price = 3500 },
+            new Store { Firm = "Firm4", Street = "Street4", Fatness = 15, Price = 2500 },
+            new Store { Firm = "Firm5", Street = "Street5", Fatness = 20, Price = 3000 },
+            new Store { Firm = "Firm6", Street = "Street6", Fatness = 25, Price = 3500 }
+        };
+
+        XmlSerializer serializer = new XmlSerializer(typeof(List<Store>));
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            serializer.Serialize(writer, stores);
+        }
+    }
+
     // Метод для определения количества магазинов, продающих сметану дешевле всего
     public static void DetermineCheapestStores(string filePath)
     {
-        Dictionary<int, (int MinPrice, int StoreCount)> fatnessPrices = new Dictionary<int, 
+        Dictionary<int, (int MinPrice, int StoreCount)> fatnessPrices = new Dictionary<int,
             (int MinPrice, int StoreCount)>
         {
             { 15, (int.MaxValue, 0) },
@@ -17,47 +47,36 @@ public partial class TaskSolver
 
         try
         {
-            string[] lines = File.ReadAllLines(filePath);
-
-            foreach (string line in lines)
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Store>));
+            using (StreamReader reader = new StreamReader(filePath))
             {
-                string[] parts = line.Split(' ');
+                List<Store> stores = (List<Store>)serializer.Deserialize(reader);
 
-                if (parts.Length != 4)
+                foreach (Store store in stores)
                 {
-                    Console.WriteLine("Некорректный ввод. Пожалуйста, введите данные в формате: " +
-                                      "<Фирма> <Улица> <Жирность> <Цена>");
-                    continue;
-                }
+                    int fatness = store.Fatness;
+                    int price = store.Price;
 
-                string firm = parts[0];
-                string street = parts[1];
-                if (!int.TryParse(parts[2], out int fatness) || !int.TryParse(parts[3], out int price))
-                {
-                    Console.WriteLine("Некорректный ввод. Пожалуйста, введите данные в формате: " +
-                                      "<Фирма> <Улица> <Жирность> <Цена>");
-                    continue;
-                }
+                    if (price < 2000 || price > 5000)
+                    {
+                        Console.WriteLine("Некорректный ввод цены. Цена должна быть в диапазоне от 2000 до 5000.");
+                        continue;
+                    }
 
-                if (price < 2000 || price > 5000)
-                {
-                    Console.WriteLine("Некорректный ввод цены. Цена должна быть в диапазоне от 2000 до 5000.");
-                    continue;
-                }
+                    if (!fatnessPrices.ContainsKey(fatness))
+                    {
+                        fatnessPrices[fatness] = (int.MaxValue, 0);
+                    }
 
-                if (!fatnessPrices.ContainsKey(fatness))
-                {
-                    fatnessPrices[fatness] = (int.MaxValue, 0);
-                }
-
-                if (price < fatnessPrices[fatness].MinPrice)
-                {
-                    fatnessPrices[fatness] = (price, 1);
-                }
-                else if (price == fatnessPrices[fatness].MinPrice)
-                {
-                    fatnessPrices[fatness] = (fatnessPrices[fatness].MinPrice, 
-                        fatnessPrices[fatness].StoreCount + 1);
+                    if (price < fatnessPrices[fatness].MinPrice)
+                    {
+                        fatnessPrices[fatness] = (price, 1);
+                    }
+                    else if (price == fatnessPrices[fatness].MinPrice)
+                    {
+                        fatnessPrices[fatness] = (fatnessPrices[fatness].MinPrice,
+                            fatnessPrices[fatness].StoreCount + 1);
+                    }
                 }
             }
 
@@ -76,7 +95,8 @@ public partial class TaskSolver
 
     public static void MainForTask5(string[] args)
     {
-        string filePath = "task5.txt";
+        string filePath = "task5.xml";
+        GenerateAndSerializeData(filePath);
         DetermineCheapestStores(filePath);
     }
 }
