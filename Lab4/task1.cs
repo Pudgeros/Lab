@@ -4,20 +4,20 @@ using System.Collections.Generic;
 public partial class TaskSolver
 {
     // Метод для переноса первого элемента в конец списка
-    public static void MoveFirstElementToEnd(List<int> list)
+    public static void MoveFirstElementToEnd(List<string> list)
     {
         if (list == null || list.Count == 0)
         {
             throw new ArgumentException("Список не должен быть пустым или null");
         }
 
-        int firstElement = list[0];
+        string firstElement = list[0];
         list.RemoveAt(0);
         list.Add(firstElement);
     }
 
     // Вспомогательный метод для вывода списка
-    private static void PrintList(List<int> list)
+    private static void PrintList(List<string> list)
     {
         foreach (var item in list)
         {
@@ -27,9 +27,9 @@ public partial class TaskSolver
     }
 
     // Вспомогательный метод для ввода списка пользователем
-    private static List<int> ReadListFromUser()
+    private static List<string> ReadListFromUser()
     {
-        List<int> list = new List<int>();
+        List<string> list = new List<string>();
         Console.WriteLine("Введите элементы списка (по одному в строке, для завершения введите пустую строку):");
 
         while (true)
@@ -40,14 +40,7 @@ public partial class TaskSolver
                 break;
             }
 
-            if (int.TryParse(input, out int number))
-            {
-                list.Add(number);
-            }
-            else
-            {
-                Console.WriteLine("Некорректный ввод. Пожалуйста, введите целое число.");
-            }
+            list.Add(input);
         }
 
         return list;
@@ -55,7 +48,7 @@ public partial class TaskSolver
 
     public static void MainForTask1(string[] args)
     {
-        List<int> list = ReadListFromUser();
+        List<string> list = ReadListFromUser();
 
         if (list.Count == 0)
         {
