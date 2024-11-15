@@ -4,22 +4,22 @@ using System.Collections.Generic;
 public partial class TaskSolver
 {
     // Метод для удаления элементов с одинаковыми соседями
-    public static void RemoveElementsWithEqualNeighbors(LinkedList<int> list)
+    public static void RemoveElementsWithEqualNeighbors(LinkedList<string> list)
     {
         if (list == null || list.Count < 2)
         {
             throw new ArgumentException("Список должен содержать не менее двух элементов");
         }
 
-        LinkedListNode<int> current = list.First;
-        LinkedListNode<int> previous = null;
-        LinkedListNode<int> next = current.Next;
+        LinkedListNode<string> current = list.First;
+        LinkedListNode<string> previous = null;
+        LinkedListNode<string> next = current.Next;
 
         while (next != null)
         {
             if (previous != null && previous.Value == next.Value)
             {
-                LinkedListNode<int> toRemove = current;
+                LinkedListNode<string> toRemove = current;
                 current = current.Next;
                 list.Remove(toRemove);
             }
@@ -39,7 +39,7 @@ public partial class TaskSolver
     }
 
     // Вспомогательный метод для вывода списка
-    private static void PrintList(LinkedList<int> list)
+    private static void PrintList(LinkedList<string> list)
     {
         foreach (var item in list)
         {
@@ -49,9 +49,9 @@ public partial class TaskSolver
     }
 
     // Вспомогательный метод для ввода списка пользователем
-    private static LinkedList<int> ReadLinkedListFromUser()
+    private static LinkedList<string> ReadLinkedListFromUser()
     {
-        LinkedList<int> list = new LinkedList<int>();
+        LinkedList<string> list = new LinkedList<string>();
         Console.WriteLine("Введите элементы списка (по одному в строке, для завершения введите пустую строку):");
 
         while (true)
@@ -62,14 +62,7 @@ public partial class TaskSolver
                 break;
             }
 
-            if (int.TryParse(input, out int number))
-            {
-                list.AddLast(number);
-            }
-            else
-            {
-                Console.WriteLine("Некорректный ввод. Пожалуйста, введите целое число.");
-            }
+            list.AddLast(input);
         }
 
         return list;
@@ -77,7 +70,7 @@ public partial class TaskSolver
 
     public static void MainForTask2(string[] args)
     {
-        LinkedList<int> list = ReadLinkedListFromUser();
+        LinkedList<string> list = ReadLinkedListFromUser();
 
         if (list.Count < 2)
         {
