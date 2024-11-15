@@ -4,20 +4,20 @@ using System.Collections.Generic;
 public partial class TaskSolver
 {
     // Метод для переноса первого элемента в конец списка
-    public static void MoveFirstElementToEnd(List<string> list)
+    public static void MoveFirstElementToEnd<T>(List<T> list)
     {
         if (list == null || list.Count == 0)
         {
             throw new ArgumentException("Список не должен быть пустым или null");
         }
 
-        string firstElement = list[0];
+        T firstElement = list[0];
         list.RemoveAt(0);
         list.Add(firstElement);
     }
 
     // Вспомогательный метод для вывода списка
-    private static void PrintList(List<string> list)
+    private static void PrintList<T>(List<T> list)
     {
         foreach (var item in list)
         {
@@ -27,9 +27,9 @@ public partial class TaskSolver
     }
 
     // Вспомогательный метод для ввода списка пользователем
-    private static List<string> ReadListFromUser()
+    private static List<T> ReadListFromUser<T>()
     {
-        List<string> list = new List<string>();
+        List<T> list = new List<T>();
         Console.WriteLine("Введите элементы списка (по одному в строке, для завершения введите пустую строку):");
 
         while (true)
@@ -40,7 +40,9 @@ public partial class TaskSolver
                 break;
             }
 
-            list.Add(input);
+            // Преобразование ввода в тип T
+            T item = (T)Convert.ChangeType(input, typeof(T));
+            list.Add(item);
         }
 
         return list;
@@ -48,20 +50,20 @@ public partial class TaskSolver
 
     public static void MainForTask1(string[] args)
     {
-        List<string> list = ReadListFromUser();
+        List<string> stringList = ReadListFromUser<string>();
 
-        if (list.Count == 0)
+        if (stringList.Count == 0)
         {
             Console.WriteLine("Список пуст. Программа завершена.");
             return;
         }
 
         Console.WriteLine("Исходный список:");
-        PrintList(list);
+        PrintList(stringList);
 
-        MoveFirstElementToEnd(list);
+        MoveFirstElementToEnd(stringList);
 
         Console.WriteLine("Список после переноса первого элемента в конец:");
-        PrintList(list);
+        PrintList(stringList);
     }
 }
