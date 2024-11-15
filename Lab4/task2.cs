@@ -4,22 +4,22 @@ using System.Collections.Generic;
 public partial class TaskSolver
 {
     // Метод для удаления элементов с одинаковыми соседями
-    public static void RemoveElementsWithEqualNeighbors(LinkedList<string> list)
+    public static void RemoveElementsWithEqualNeighbors<T>(LinkedList<T> list)
     {
         if (list == null || list.Count < 2)
         {
             throw new ArgumentException("Список должен содержать не менее двух элементов");
         }
 
-        LinkedListNode<string> current = list.First;
-        LinkedListNode<string> previous = null;
-        LinkedListNode<string> next = current.Next;
+        LinkedListNode<T> current = list.First;
+        LinkedListNode<T> previous = null;
+        LinkedListNode<T> next = current.Next;
 
         while (next != null)
         {
-            if (previous != null && previous.Value == next.Value)
+            if (previous != null && EqualityComparer<T>.Default.Equals(previous.Value, next.Value))
             {
-                LinkedListNode<string> toRemove = current;
+                LinkedListNode<T> toRemove = current;
                 current = current.Next;
                 list.Remove(toRemove);
             }
@@ -32,14 +32,14 @@ public partial class TaskSolver
         }
 
         // Проверка первого и последнего элемента
-        if (list.First.Value == list.Last.Value)
+        if (EqualityComparer<T>.Default.Equals(list.First.Value, list.Last.Value))
         {
             list.RemoveFirst();
         }
     }
 
     // Вспомогательный метод для вывода списка
-    private static void PrintList(LinkedList<string> list)
+    private static void PrintList<T>(LinkedList<T> list)
     {
         foreach (var item in list)
         {
@@ -49,9 +49,9 @@ public partial class TaskSolver
     }
 
     // Вспомогательный метод для ввода списка пользователем
-    private static LinkedList<string> ReadLinkedListFromUser()
+    private static LinkedList<T> ReadLinkedListFromUser<T>()
     {
-        LinkedList<string> list = new LinkedList<string>();
+        LinkedList<T> list = new LinkedList<T>();
         Console.WriteLine("Введите элементы списка (по одному в строке, для завершения введите пустую строку):");
 
         while (true)
@@ -62,7 +62,9 @@ public partial class TaskSolver
                 break;
             }
 
-            list.AddLast(input);
+            // Преобразование ввода в тип T
+            T item = (T)Convert.ChangeType(input, typeof(T));
+            list.AddLast(item);
         }
 
         return list;
@@ -70,20 +72,20 @@ public partial class TaskSolver
 
     public static void MainForTask2(string[] args)
     {
-        LinkedList<string> list = ReadLinkedListFromUser();
+        LinkedList<string> stringList = ReadLinkedListFromUser<string>();
 
-        if (list.Count < 2)
+        if (stringList.Count < 2)
         {
             Console.WriteLine("Список должен содержать не менее двух элементов. Программа завершена.");
             return;
         }
 
         Console.WriteLine("Исходный список:");
-        PrintList(list);
+        PrintList(stringList);
 
-        RemoveElementsWithEqualNeighbors(list);
+        RemoveElementsWithEqualNeighbors(stringList);
 
         Console.WriteLine("Список после удаления элементов с одинаковыми соседями:");
-        PrintList(list);
+        PrintList(stringList);
     }
 }
