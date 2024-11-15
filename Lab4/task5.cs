@@ -14,7 +14,7 @@ public partial class TaskSolver
         public int Price { get; set; }
     }
 
-    // Метод для генерации данных и сериализации их в XML-файл
+    // Метод для генерации и сериализации данных 
     public static void GenerateAndSerializeData(string filePath)
     {
         List<Store> stores = new List<Store>
