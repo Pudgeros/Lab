@@ -117,6 +117,22 @@ public class DatabaseHelper
 
         if (rowIndex != -1)
         {
+            switch (tableName)
+            {
+                case "Клиенты":
+                    _clients.RemoveAll(c => c.ClientId.ToString() == key);
+                    break;
+                case "Заказы":
+                    _orders.RemoveAll(o => o.OrderId.ToString() == key);
+                    break;
+                case "Услуги":
+                    _services.RemoveAll(s => s.ServiceId.ToString() == key);
+                    break;
+                case "Типы услуг":
+                    _serviceTypes.RemoveAll(st => st.ServiceTypeId.ToString() == key);
+                    break;
+            }
+
             sheet.Cells.DeleteRow(rowIndex);
             Console.WriteLine("Элемент успешно удален.");
             SaveChanges();
@@ -149,6 +165,39 @@ public class DatabaseHelper
             Console.Write("Введите новое значение: ");
             string newValue = Console.ReadLine();
             sheet.Cells[rowIndex, keyColumnIndex + 1].PutValue(newValue);
+
+            switch (tableName)
+            {
+                case "Клиенты":
+                    var client = _clients.FirstOrDefault(c => c.ClientId.ToString() == key);
+                    if (client != null)
+                    {
+                        client.LastName = newValue;
+                    }
+                    break;
+                case "Заказы":
+                    var order = _orders.FirstOrDefault(o => o.OrderId.ToString() == key);
+                    if (order != null)
+                    {
+                        order.OrderDate = DateTime.Parse(newValue);
+                    }
+                    break;
+                case "Услуги":
+                    var service = _services.FirstOrDefault(s => s.ServiceId.ToString() == key);
+                    if (service != null)
+                    {
+                        service.Name = newValue;
+                    }
+                    break;
+                case "Типы услуг":
+                    var serviceType = _serviceTypes.FirstOrDefault(st => st.ServiceTypeId.ToString() == key);
+                    if (serviceType != null)
+                    {
+                        serviceType.Name = newValue;
+                    }
+                    break;
+            }
+
             Console.WriteLine("Элемент успешно обновлен.");
             SaveChanges();
         }
@@ -184,6 +233,42 @@ public class DatabaseHelper
         for (int i = 0; i < values.Length; i++)
         {
             sheet.Cells[rows, i].PutValue(values[i].Trim());
+        }
+
+        switch (tableName)
+        {
+            case "Клиенты":
+                _clients.Add(new Client(
+                    int.Parse(values[0]),
+                    values[1],
+                    values[2],
+                    values[3],
+                    values[4]
+                ));
+                break;
+            case "Заказы":
+                _orders.Add(new Order(
+                    int.Parse(values[0]),
+                    int.Parse(values[1]),
+                    DateTime.Parse(values[2]),
+                    int.Parse(values[3]),
+                    int.Parse(values[4])
+                ));
+                break;
+            case "Услуги":
+                _services.Add(new Service(
+                    int.Parse(values[0]),
+                    int.Parse(values[1]),
+                    values[2],
+                    decimal.Parse(values[3].Replace(" р.", ""))
+                ));
+                break;
+            case "Типы услуг":
+                _serviceTypes.Add(new ServiceType(
+                    int.Parse(values[0]),
+                    values[1]
+                ));
+                break;
         }
 
         Console.WriteLine("Элемент успешно добавлен.");
