@@ -1,24 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace CombinedProject
 {
-    // Интерфейс для работы с дробями
-    public interface IFraction
-    {
-        double GetRealValue();
-        void SetNumerator(int numerator);
-        void SetDenominator(int denominator);
-    }
-
     // Класс для работы с дробями
     public class Fraction : IFraction, ICloneable
     {
-        public int Numerator { get; private set; }
-        public int Denominator { get; private set; }
+        public int Numerator { get; private set; } // Числитель
+        public int Denominator { get; private set; } // Знаменатель
 
-        private double? _realValue;
+        private static readonly FractionCache Cache = new FractionCache(); // Кеш для хранения вещественных значений дробей
 
         public Fraction(int numerator, int denominator)
         {
@@ -33,7 +24,7 @@ namespace CombinedProject
             }
             Numerator = numerator;
             Denominator = denominator;
-            Simplify();
+            Simplify(); // Упрощение дроби
         }
 
         public override string ToString()
@@ -47,10 +38,10 @@ namespace CombinedProject
 
         private void Simplify()
         {
-            int gcd = GCD(Numerator, Denominator);
+            int gcd = GCD(Numerator, Denominator); // Нахождение наибольшего общего делителя
             Numerator /= gcd;
             Denominator /= gcd;
-            _realValue = null; 
+            Cache.Invalidate(this); // Инвалидация кеша при упрощении дроби
         }
 
         private int GCD(int a, int b)
@@ -143,17 +134,13 @@ namespace CombinedProject
 
         public double GetRealValue()
         {
-            if (_realValue == null)
-            {
-                _realValue = (double)Numerator / Denominator;
-            }
-            return _realValue.Value;
+            return Cache.GetRealValue(this); // Получение значения из кеша или вычисление нового значения
         }
 
         public void SetNumerator(int numerator)
         {
             Numerator = numerator;
-            Simplify();
+            Simplify(); // Упрощение дроби после изменения числителя
         }
 
         public void SetDenominator(int denominator)
@@ -163,7 +150,7 @@ namespace CombinedProject
                 throw new ArgumentException("Знаменатель не может быть равен нулю.");
             }
             Denominator = denominator;
-            Simplify();
+            Simplify(); // Упрощение дроби после изменения знаменателя
         }
     }
 }
